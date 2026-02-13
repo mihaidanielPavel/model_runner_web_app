@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROS2 Agent Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-robot"></i> ROS2 Agent</h2>
+                <div class="connection-status" id="connectionStatus">
+                    <i class="fas fa-circle"></i>
+                    <span>Connecting...</span>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-section="logs">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Logs</span>
+                </li>
+                <li class="nav-item" data-section="interaction">
+                    <i class="fas fa-comments"></i>
+                    <span>Agent Chat</span>
+                </li>
+                <li class="nav-item" data-section="locations">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Locations</span>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1><i class="fas fa-tachometer-alt"></i> Robot Dashboard</h1>
+                    <div class="last-updated" id="dashboardLastUpdated">Last updated: Never</div>
+                </div>
+
+                <!-- Status Cards -->
+                <div class="status-grid">
+                    <div class="status-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-info-circle"></i> Robot Status</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="status-item">
+                                <span class="label">Node Name:</span>
+                                <span class="value" id="nodeName">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Subscribers:</span>
+                                <span class="value" id="subscriberCount">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Services:</span>
+                                <span class="value" id="serviceCount">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">AI Agent:</span>
+                                <span class="value" id="aiAgentStatus">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-map-marked-alt"></i> Navigation</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="status-item">
+                                <span class="label">Status:</span>
+                                <span class="value" id="navStatus">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Position:</span>
+                                <span class="value" id="robotPosition">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Frame:</span>
+                                <span class="value" id="robotFrame">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Goal Active:</span>
+                                <span class="value" id="goalActive">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-satellite-dish"></i> Sensors</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="status-item">
+                                <span class="label">Camera:</span>
+                                <span class="value" id="cameraStatus">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">LiDAR:</span>
+                                <span class="value" id="lidarStatus">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">IMU:</span>
+                                <span class="value" id="imuStatus">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Odometry:</span>
+                                <span class="value" id="odomStatus">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> Performance</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="status-item">
+                                <span class="label">Data Cache:</span>
+                                <span class="value" id="dataCacheCount">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Discovery:</span>
+                                <span class="value" id="discoveryStatus">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Uptime:</span>
+                                <span class="value" id="uptime">-</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Memory:</span>
+                                <span class="value" id="memoryUsage">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" id="stopNavigation">
+                            <i class="fas fa-stop"></i>
+                            Stop Navigation
+                        </button>
+                        <button class="action-btn" id="getStatus">
+                            <i class="fas fa-info"></i>
+                            Get Status
+                        </button>
+                        <button class="action-btn" id="refreshData">
+                            <i class="fas fa-sync"></i>
+                            Refresh Data
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section id="logs" class="content-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-list-alt"></i> Interaction Logs</h1>
+                    <div class="log-controls">
+                        <div class="filter-controls">
+                            <select id="logFilter">
+                                <option value="all">All Logs</option>
+                                <option value="success">Successful</option>
+                                <option value="error">Errors Only</option>
+                                <option value="navigation">Navigation</option>
+                                <option value="service">Service Calls</option>
+                            </select>
+                            <input type="text" id="logSearch" placeholder="Search logs...">
+                        </div>
+                        <button class="action-btn" id="exportLogs">
+                            <i class="fas fa-download"></i>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="logs-container">
+                    <div class="logs-table-container">
+                        <table class="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Question</th>
+                                    <th>Response</th>
+                                    <th>Tokens</th>
+                                    <th>Timing</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <tr class="no-data">
+                                    <td colspan="6">No logs available</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agent Interaction Section -->
+            <section id="interaction" class="content-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-comments"></i> Agent Chat</h1>
+                    <div class="chat-controls">
+                        <button class="action-btn" id="clearChat">
+                            <i class="fas fa-trash"></i>
+                            Clear Chat
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message system-message">
+                            <div class="message-content">
+                                <i class="fas fa-robot"></i>
+                                <span>Welcome! I'm your ROS2 agent assistant. Ask me anything about the robot's status, sensors, or navigation.</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <input type="text" id="chatInput" placeholder="Ask the agent something..." autocomplete="off">
+                            <button class="send-btn" id="sendMessage">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="chat-status" id="chatStatus">
+                            Ready to chat
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Locations Section -->
+            <section id="locations" class="content-section">
+                <div class="section-header">
+                    <h1><i class="fas fa-map-marker-alt"></i> Location Labels</h1>
+                    <button class="action-btn" id="addLocationBtn">
+                        <i class="fas fa-plus"></i>
+                        Add Location
+                    </button>
+                </div>
+
+                <div class="locations-container">
+                    <div class="locations-table-container">
+                        <table class="locations-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>X Coordinate</th>
+                                    <th>Y Coordinate</th>
+                                    <th>Yaw</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="locationsTableBody">
+                                <tr class="no-data">
+                                    <td colspan="5">No locations saved</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Add Location Modal -->
+                <div class="modal" id="addLocationModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Add New Location</h3>
+                            <button class="modal-close" id="closeAddLocationModal">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addLocationForm">
+                                <div class="form-group">
+                                    <label for="locationName">Location Name:</label>
+                                    <input type="text" id="locationName" required placeholder="e.g., storage, home, kitchen">
+                                </div>
+                                <div class="form-group">
+                                    <label for="locationX">X Coordinate:</label>
+                                    <input type="number" id="locationX" step="0.001" required placeholder="0.000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="locationY">Y Coordinate:</label>
+                                    <input type="number" id="locationY" step="0.001" required placeholder="0.000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="locationYaw">Yaw (orientation):</label>
+                                    <input type="number" id="locationYaw" step="0.001" placeholder="0.000">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="action-btn secondary" id="cancelAddLocation">
+                                Cancel
+                            </button>
+                            <button type="submit" class="action-btn primary" id="saveLocation">
+                                Save Location
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading...</span>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

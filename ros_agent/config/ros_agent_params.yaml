@@ -1,0 +1,79 @@
+# ROS2 Agent Parameters
+# This file contains ROS2-specific parameters for the agent node
+
+ros__parameters:
+  # Gemma3 API Configuration
+  gemma:
+    api_url: "http://model-runner.docker.internal"
+    model_name: "ai/gemma3"
+    timeout: 30
+    max_retries: 3
+
+  # Web Server Configuration
+  web_server:
+    host: "0.0.0.0"
+    port: 5000
+    debug: false
+    cors_allowed_origins: "*"
+
+  # ROS2 Configuration
+  ros2:
+    node_name: "ros_agent"
+    namespace: ""
+    
+  # Sensor Topics Configuration
+  sensors:
+    camera:
+      topics: ["/camera/image_raw", "/camera/rgb/image_raw", "/camera/color/image_raw"]
+      enabled: true
+      update_rate: 1.0
+      
+    lidar:
+      topics: ["/scan", "/laser_scan", "/lidar/scan"]
+      enabled: true
+      update_rate: 5.0
+      
+    odometry:
+      topics: ["/odom", "/odometry", "/robot_odom"]
+      enabled: true
+      update_rate: 10.0
+      
+    imu:
+      topics: ["/imu", "/imu/data", "/robot_imu"]
+      enabled: true
+      update_rate: 20.0
+
+  # Auto-discovery settings
+  discovery:
+    enabled: true
+    scan_interval: 5.0
+    exclude_patterns: ["/rosout", "/tf", "/tf_static"]
+
+  # Logging Configuration
+  logging:
+    level: "INFO"
+    file: "ros_agent.log"
+    max_size: "10MB"
+    backup_count: 5
+    log_dir: "logs"
+
+  # Navigation2 Configuration
+  navigation:
+    enabled: true
+    action_server: "navigate_to_pose"
+    pose_topic: "/amcl_pose"
+    timeout: 30.0
+    goal_tolerance: 0.5
+    
+    # Common navigation2 service topics
+    services:
+      clear_costmap: "/global_costmap/clear_entirely_global_costmap"
+      get_costmap: "/global_costmap/get_costmap"
+      load_map: "/map_server/load_map"
+      save_map: "/map_saver/save_map"
+
+  # CLI Configuration
+  cli:
+    prompt: "🤖 Agent> "
+    history_file: ".agent_history"
+    auto_complete: true
